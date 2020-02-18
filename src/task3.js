@@ -2,6 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button, Form, DropdownButton, Dropdown, Col } from "react-bootstrap";
 
+const MyContext = React.createContext({
+  language: ""
+});
+
 /*
   В этом задании нужно доделать компоненты LocalizedText и LocalizedApp.
   Другие компоненты модифицировать не нужно.
@@ -40,7 +44,23 @@ const languages = ["EN", "DE", "RU"];
   Если перевода нет, как, например, для Clear на немецком, должна показываться
   оригинальная строка на английском.
 */
-const LocalizedText = ({ children }) => children;
+
+
+
+const LocalizedText = ({ children }) => (
+  <MyContext.Consumer>
+    {
+      (remoteState) => {
+        let lang = remoteState.language.toLowerCase();
+
+        if (typeof dictionaries[lang][children] == 'undefined') 
+          return dictionaries.en[children];
+        
+        return dictionaries[lang][children];
+      }      
+    }
+  </MyContext.Consumer>
+);
 
 LocalizedText.propTypes = {
   children: PropTypes.string.isRequired
@@ -113,7 +133,9 @@ class LocalizedApp extends React.Component {
           />
         </Col>
         <Col>
-          <UserForm />
+          <MyContext.Provider value={this.state}>
+            <UserForm />
+          </MyContext.Provider>
         </Col>
       </>
     );

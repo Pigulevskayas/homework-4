@@ -2,7 +2,15 @@ import React from "react";
 import { Col, Container, Row, Form } from "react-bootstrap";
 import { Input } from "./Input";
 import { UserForm } from "./UserForm";
-
+const MyContext = React.createContext({
+  input: "",
+    user: {
+      firstName: "",
+      lastName: "",
+      login: ""
+    },
+    change: (value) => {}
+});
 /*
   В этом задании нужно научить компонент подключаться к состоянию, 
   общему для всего приложения. Для этого нужно закончить функцию connect 
@@ -23,7 +31,14 @@ import { UserForm } from "./UserForm";
 function connect(Component) {
   return class extends React.Component {
     render() {
-      return <Component state={{}} setState={() => {}} />;
+      return (
+        <MyContext.Consumer> 
+          {
+            ({change}) => 
+              (<Component state={{}} setState={(value) => {change(value)}} />)
+          }
+        </MyContext.Consumer> 
+      );
     }
   };
 }
@@ -45,13 +60,26 @@ const ConnecetedUserForm = connect(({ state, setState }) => (
 
 class AppWithGlobalState extends React.Component {
   // единственное на все приложение состояние
+  change = (value) => { 
+    if(typeof value.input != "undefined")
+      this.setState(state => ({
+        input: value.input,
+      }));
+    else {
+      this.setState(state => ({
+        user: value.user,
+      }));
+    }
+  };
+
   state = {
     input: "input text",
     user: {
       firstName: "Bill",
       lastName: "Smith",
       login: "billsmith"
-    }
+    },
+    change: this.change,
   };
 
   render() {
@@ -61,10 +89,14 @@ class AppWithGlobalState extends React.Component {
         <Container>
           <Row>
             <Col>
+            <MyContext.Provider value={this.state}>
               <ConnectedInput />
+            </MyContext.Provider>
             </Col>
             <Col>
-              <ConnecetedUserForm />
+              <MyContext.Provider value={this.state}>
+                <ConnecetedUserForm />
+              </MyContext.Provider>
             </Col>
           </Row>
           <Row>

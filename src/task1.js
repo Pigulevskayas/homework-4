@@ -9,15 +9,22 @@ import { UserForm } from "./UserForm";
   Ваша задача реализовать функции save и load.
 */
 
-function save() {
+function save(storageKey, storageValue) {
   /*
     Эта функция сохраняет переданное знчаение в localStorage.
     Ключ, куда сохранять тоже должен быть аргументом функции.
     Yе забывайте, что объекты нужно предварительно трансформировать в строку с помощью JSON.stringify.
   */
+
+  if (typeof storageValue == 'object' ) {
+    storageValue = JSON.stringify(storageValue);
+  }
+
+  localStorage.setItem(storageKey, storageValue);
+
 }
 
-function load() {
+function load(storageKey) {
   /*
     Эта функция читает из localStorage значение, хранящееся по переданному в качестве аргумента ключу.
     Не забывайте, что:
@@ -25,12 +32,19 @@ function load() {
     - там может храниться объект в JSON, который надо предварительно трансформировать в объект JS при
       помощи JSON.parse.
   */
+  
+  if(storageKey == 'user') {
+    return JSON.parse(localStorage.getItem(storageKey));
+  } else {
+    return localStorage.getItem(storageKey);
+  }
+
 }
 
 const LocalStorage = ({ children }) => children({ save, load });
 
 export const Task1 = () => (
-  <>
+  <React.Fragment>
     <Col>
       <Form>
         <Form.Label>Input with value from localStorage</Form.Label>
@@ -58,7 +72,7 @@ export const Task1 = () => (
         )}
       </LocalStorage>
     </Col>
-  </>
+  </React.Fragment>
 );
 
 Task1.title = "1. Render prop. LocalStorage";
