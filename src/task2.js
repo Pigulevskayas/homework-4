@@ -8,6 +8,25 @@ import { Col, Form } from "react-bootstrap";
 
 class State extends React.Component {
   render() {
+    const firstState = this.props.initialState;
+
+    var isPlainObject = function (obj) {
+      return Object.prototype.toString.call(obj) === '[object Object]';
+    };
+    const checkIfObject = isPlainObject(firstState);
+    //console.log(checkIfObject);
+
+    if (checkIfObject) {
+        
+      } else {
+        if (typeof firstState == 'undefined') {
+          
+        } else {
+          
+        }
+      }
+
+
     return this.props.children({
       /* 
         Для выполнения задания нужно заменить state и setState.
